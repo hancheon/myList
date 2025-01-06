@@ -1,20 +1,200 @@
-﻿// myList.cpp : 이 파일에는 'main' 함수가 포함됩니다. 거기서 프로그램 실행이 시작되고 종료됩니다.
-//
+﻿#include <iostream>
 
-#include <iostream>
+template <typename T>
+class myList
+{
+public:
+	struct Node
+	{
+		T data;
+		Node* prev;
+		Node* next;
+	};
+
+	class iterator
+	{
+	private:
+		Node* node;
+	public:
+		iterator(Node* node = nullptr) : node(node) {}
+		
+		iterator& operator++()
+		{
+			node = node->next;
+			return *this;
+		}
+
+		iterator& operator++(int)
+		{
+			iterator temp = *this;
+			node = node->next;
+			return temp;
+		}
+
+		iterator& operator--()
+		{
+			node = node->prev;
+			return *this;
+		}
+
+		iterator& operator--(int)
+		{
+			iterator temp = *this;
+			node = node->prev;
+			return temp;
+		}
+
+		T& operator*()
+		{
+			return node->data;
+		}
+
+		bool operator==(const iterator& other)
+		{
+			return node == other.node;
+		}
+
+		bool operator!=(const iterator& other)
+		{
+			return node != other.node;
+		}
+	};
+
+private:
+	int list_size = 0;
+	Node* head;
+	Node* tail;
+public:
+	myList()
+	{
+		head = new Node;
+		tail = new Node;
+
+		head->next = tail;
+		tail->prev = head;
+
+		head->prev = nullptr;
+		tail->next = nullptr;
+	}
+	~myList() {}
+
+	iterator begin()
+	{
+		return iterator(head->next);
+	}
+
+	iterator end()
+	{
+		return iterator(tail);
+	}
+
+	void push_front(T data)
+	{
+		Node* temp = new Node;
+		temp->data = data;
+		temp->prev = head;
+		temp->next = head->next;
+		head->next = temp;
+		temp->next->prev = temp;
+		list_size++;
+	}
+
+	void push_back(T data)
+	{
+		Node* temp = new Node;
+		temp->data = data;
+		temp->prev = tail->prev;
+		temp->next = tail;
+		tail->prev = temp;
+		temp->prev->next = temp;
+		list_size++;
+	}
+
+	void pop_front()
+	{
+		if (!empty())
+		{
+			Node* temp = head->next;
+			head->next = temp->next;
+			temp->next->prev = head;
+			delete(temp);
+			list_size--;
+		}
+	}
+
+	void pop_back()
+	{
+		if (!empty())
+		{
+			Node* temp = tail->prev;
+			tail->prev = temp->prev;
+			temp->prev->next = tail;
+			delete(temp);
+			list_size--;
+		}
+	}
+
+	void clear()
+	{
+		iterator iter = this->begin();
+
+		while (iter != this->end())
+		{
+			delete(iter++);
+		}
+	}
+
+	int size()
+	{
+		return list_size;
+	};
+
+	bool empty()
+	{
+		return list_size == 0 ? true : false;
+	};
+
+	iterator erase(iterator iter)
+	{
+		//return temp;
+	}
+
+	void remove(T data)
+	{
+		iterator iter;
+
+		for (iter = this->begin(); iter != this->end(); iter++)
+		{
+			if (*iter == data)
+				erase(iter);
+		}
+	}
+};
 
 int main()
 {
-    std::cout << "Hello World!\n";
+	myList<int> list;
+
+	list.push_back(3);
+	list.push_back(4);
+	list.push_back(5);
+	list.push_back(6);
+	list.push_back(7);
+	list.push_back(8);
+	list.push_back(9);
+	list.push_back(10);
+
+	list.pop_back();
+	list.pop_back();
+	list.pop_front();
+	list.pop_front();
+
+	list.remove(6);
+
+	myList<int>::iterator iter;
+
+	for (iter = list.begin(); iter != list.end(); iter++)
+	{
+		printf("%d\n", *iter);
+	}
 }
-
-// 프로그램 실행: <Ctrl+F5> 또는 [디버그] > [디버깅하지 않고 시작] 메뉴
-// 프로그램 디버그: <F5> 키 또는 [디버그] > [디버깅 시작] 메뉴
-
-// 시작을 위한 팁: 
-//   1. [솔루션 탐색기] 창을 사용하여 파일을 추가/관리합니다.
-//   2. [팀 탐색기] 창을 사용하여 소스 제어에 연결합니다.
-//   3. [출력] 창을 사용하여 빌드 출력 및 기타 메시지를 확인합니다.
-//   4. [오류 목록] 창을 사용하여 오류를 봅니다.
-//   5. [프로젝트] > [새 항목 추가]로 이동하여 새 코드 파일을 만들거나, [프로젝트] > [기존 항목 추가]로 이동하여 기존 코드 파일을 프로젝트에 추가합니다.
-//   6. 나중에 이 프로젝트를 다시 열려면 [파일] > [열기] > [프로젝트]로 이동하고 .sln 파일을 선택합니다.
