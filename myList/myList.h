@@ -1,4 +1,6 @@
-﻿template <typename T>
+﻿#pragma once
+
+template <typename T>
 class myList
 {
 public:
