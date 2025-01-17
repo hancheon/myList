@@ -64,33 +64,40 @@ public:
 
 private:
 	int _size = 0;
-	Node _head;
-	Node _tail;
+	Node* _head;
+	Node* _tail;
 public:
 	myList()
 	{
-		_head._next = &_tail;
-		_tail._prev = &_head;
+		_head = new Node;
+		_tail = new Node;
+
+		_head->_next = _tail;
+		_tail->_prev = _head;
 	}
-	~myList() {}
+	~myList()
+	{
+		delete _head;
+		delete _tail;
+	}
 
 	iterator begin()
 	{
-		return iterator(_head._next);
+		return iterator(_head->_next);
 	}
 
 	iterator end()
 	{
-		return iterator(&_tail);
+		return iterator(_tail);
 	}
 
 	void push_front(T data)
 	{
 		Node* temp = new Node;
 		temp->_data = data;
-		temp->_prev = &_head;
-		temp->_next = _head._next;
-		_head._next = temp;
+		temp->_prev = _head;
+		temp->_next = _head->_next;
+		_head->_next = temp;
 		temp->_next->_prev = temp;
 		_size++;
 	}
@@ -99,9 +106,9 @@ public:
 	{
 		Node* temp = new Node;
 		temp->_data = data;
-		temp->_prev = _tail._prev;
-		temp->_next = &_tail;
-		_tail._prev = temp;
+		temp->_prev = _tail->_prev;
+		temp->_next = _tail;
+		_tail->_prev = temp;
 		temp->_prev->_next = temp;
 		_size++;
 	}
@@ -110,9 +117,9 @@ public:
 	{
 		if (!empty())
 		{
-			Node* temp = _head._next;
-			_head._next = temp->_next;
-			temp->_next->_prev = &_head;
+			Node* temp = _head->_next;
+			_head->_next = temp->_next;
+			temp->_next->_prev = _head;
 			delete(temp);
 			_size--;
 		}
@@ -122,9 +129,9 @@ public:
 	{
 		if (!empty())
 		{
-			Node* temp = _tail._prev;
-			_tail._prev = temp->_prev;
-			temp->_prev->_next = &_tail;
+			Node* temp = _tail->_prev;
+			_tail->_prev = temp->_prev;
+			temp->_prev->_next = _tail;
 			delete(temp);
 			_size--;
 		}
